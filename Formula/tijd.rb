@@ -2,9 +2,9 @@ class Tijd < Formula
   include Language::Python::Virtualenv
 
   desc "De Tijd terminal reader"
-  homepage "https://github.com/andyfraussen/DeTijd-CLI"
-  url "https://github.com/andyfraussen/DeTijd-CLI/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "15c8dce7264663dc2e31f04a890c88ce8a5e2a46ff86bd1463cbd984e562e191"
+  homepage "https://github.com/andyfraussen/tijd"
+  url "https://github.com/andyfraussen/tijd/archive/refs/tags/v0.2.0.tar.gz"
+  sha256 "9b7c0718517ee71411e61821ab7849dc1343062e4e127c265439cf999819de0f"
   license "MIT"
 
   depends_on "python@3.12"
