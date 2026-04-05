@@ -134,8 +134,15 @@ class Vrtnws < Formula
 
     resources.each do |r|
       if r.name == "pillow"
-        # Install the pre-built wheel directly — no compilation needed
-        system libexec/"bin/pip", "install", "--no-deps", r.cached_download
+        # Homebrew caches wheels with a hash prefix (e.g. "abc123--pillow-10.4.0-...whl")
+        # which pip doesn't recognise as a wheel. Copy it with the real filename first.
+        cached = r.cached_download
+        real_name = cached.basename.to_s.sub(/\A[0-9a-f]+--/, "")
+        wheel_dir = buildpath/"pillow_wheel"
+        wheel_dir.mkpath
+        cp cached, wheel_dir/real_name
+        system libexec/"bin/pip", "install", "--no-deps",
+               "--no-index", "--find-links=#{wheel_dir}", "pillow"
       else
         venv.pip_install(r)
       end
