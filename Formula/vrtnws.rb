@@ -141,7 +141,7 @@ class Vrtnws < Formula
         wheel_dir = buildpath/"pillow_wheel"
         wheel_dir.mkpath
         cp cached, wheel_dir/real_name
-        system libexec/"bin/pip", "install", "--no-deps",
+        system libexec/"bin/python", "-m", "pip", "install", "--no-deps",
                "--no-index", "--find-links=#{wheel_dir}", "pillow"
       else
         venv.pip_install(r)
