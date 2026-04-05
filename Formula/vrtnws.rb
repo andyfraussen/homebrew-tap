@@ -69,9 +69,19 @@ class Vrtnws < Formula
     sha256 "bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"
   end
 
-  resource "pillow" do
-    url "https://files.pythonhosted.org/packages/cd/74/ad3d526f3bf7b6d3f408b73fde271ec69dfac8b81341a318ce825f2b3812/pillow-10.4.0.tar.gz"
-    sha256 "166c1cd4d24309b30d61f79f4a9114b7b2313d7450912277855ff5dfd7cd4a06"
+  # Pillow is provided as a pre-built wheel per architecture to avoid C compilation issues
+  on_arm do
+    resource "pillow" do
+      url "https://files.pythonhosted.org/packages/e7/cf/5c558a0f247e0bf9cec92bff9b46ae6474dd736f6d906315e60e4075f737/pillow-10.4.0-cp312-cp312-macosx_11_0_arm64.whl"
+      sha256 "866b6942a92f56300012f5fbac71f2d610312ee65e22f1aa2609e491284e5597"
+    end
+  end
+
+  on_intel do
+    resource "pillow" do
+      url "https://files.pythonhosted.org/packages/05/cb/0353013dc30c02a8be34eb91d25e4e4cf594b59e5a55ea1128fde1e5f8ea/pillow-10.4.0-cp312-cp312-macosx_10_10_x86_64.whl"
+      sha256 "673655af3eadf4df6b5457033f086e90299fdd7a47983a13827acf7459c15d94"
+    end
   end
 
   resource "platformdirs" do
@@ -120,7 +130,18 @@ class Vrtnws < Formula
   end
 
   def install
-    virtualenv_install_with_resources
+    venv = virtualenv_create(libexec, "python3.12")
+
+    resources.each do |r|
+      if r.name == "pillow"
+        # Install the pre-built wheel directly — no compilation needed
+        system libexec/"bin/pip", "install", "--no-deps", r.cached_download
+      else
+        venv.pip_install(r)
+      end
+    end
+
+    venv.pip_install_and_link(buildpath)
   end
 
   test do
